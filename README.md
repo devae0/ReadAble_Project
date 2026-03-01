@@ -4,7 +4,7 @@
 ![TinkHerHack Banner](img.png)
 
 ## Basic Details
-**Team Name**: [ERRORS]
+**Team Name**: ERRORS
 
 **Team Members**:
 * **Member 1**: Devasangeethi S - [Model Engineering College]
@@ -83,7 +83,7 @@ You can watch the full walkthrough of **ReadAble** and its features here:
 **[👉 Click here to watch the ReadAble Demo Video](https://drive.google.com/file/d/1JRU6IwTo1bkvUuCri7YxB1UCY9nNAaJS/view?usp=drive_link)**
 
 ### Team Contributions
-* **Devasangeethi S**:UI/UX Design (Figma), Landing Page development, Diagnostic Engine assessment logic, Feature content development, and Project Documentation.
+* **Devasangeethi S**: UI/UX Design (Figma), Landing Page development, Diagnostic Engine assessment logic, Feature content development, and Project Documentation.
 *  **Annmaria A Arampulickal**: Game development for each Lab, interactive learning mechanics, and game-specific UI implementation.
 
 ---
