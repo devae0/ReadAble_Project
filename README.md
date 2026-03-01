@@ -69,5 +69,20 @@ Simply locate the index.html file in your project folder and open it directly in
 ### Screenshots
 ![Landing Page](landing-page.png)
 ![Diagnostic Page](diagnostic-test.png)
-
+![Lab page](Lab.png)
 ![Visual Lab Page](lab-dashboard.png)
+![Sound Lab Page](sound.png)
+![Focus Lab Page](focus.png)
+
+### Project Demo
+## Video
+You can watch the full walkthrough of **ReadAble** and its features here:
+
+**[👉 Click here to watch the ReadAble Demo Video](https://drive.google.com/file/d/1JRU6IwTo1bkvUuCri7YxB1UCY9nNAaJS/view?usp=drive_link)**
+
+### Team Contributions
+* **Devasangeethi S**:UI/UX Design (Figma), Landing Page development, Diagnostic Engine assessment logic, Feature content development, and Project Documentation.
+*  **Annmaria A Arampulickal**: Game development for each Lab, interactive learning mechanics, and game-specific UI implementation.
+
+### License
+
