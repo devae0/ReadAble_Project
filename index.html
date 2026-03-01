@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadAble</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Sc rollTrigger.min.js"></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <button class="nav-btn" id="btn-features">Features</button>
+            <button class="nav-btn" id="btn-about">About Us</button>
+            <button class="nav-btn" id="btn-contact">Contact</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="brand-text">
+            <span class="blue">R</span><span class="blue">e</span><span class="blue">a</span><span class="blue">d</span><span class="brown">A</span><span class="brown">b</span><span class="brown">l</span><span class="brown">e</span>
+        </h1>
+        <div class="logo-container">
+            <img src="Gemini_Generated_Image_qv6ebvqv6ebvqv6e-removebg-preview.png" alt="Logo" class="main-logo">
+        </div>
+    </main>
+
+    <section class="warming-section">
+        <div class="text-content">
+            <div id="welcome-text" class="dyslexia-friendly-p">
+                Welcome to ReadAble! This is a special space just for you. 
+                Take your time, explore the buttons, and let’s discover something amazing together!
+            </div>
+        </div>
+    </section>
+
+    <section id="learning-section">
+        <a href="projects.html" class="learn-btn">Let's Learn</a>
+    </section>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-features" class="modal-content">
+    <h2 style="margin-bottom: 20px;">Our Learning Labs</h2>
+    
+    <div class="mini-intro-grid">
+        <div class="intro-box">
+            <span class="intro-icon">⚡</span>
+            <h3>Visual Lab</h3>
+            <p>Helps with letter shapes and stopping letters from spinning.</p>
+        </div>
+        
+        <div class="intro-box">
+            <span class="intro-icon">📖</span>
+            <h3>Sound Lab</h3>
+            <p>Connects sounds to letters through interactive storytelling.</p>
+        </div>
+        
+        <div class="intro-box">
+            <span class="intro-icon">📏</span>
+            <h3>Focus Lab</h3>
+            <p>Training for eye-tracking to stay on the correct line.</p>
+        </div>
+    </div>
+
+    <button class="nav-btn close-modal" style="margin-top: 20px;">Close</button>
+</div>
+
+        <div id="modal-about" class="modal-content">
+    <h2 style="margin-bottom: 5px;">About ReadAble</h2>
+    <p style="color: var(--navy); font-size: 1.1rem; margin-bottom: 20px;">A Passion Project by Students</p>
+    
+    <div class="about-scroll-area">
+        <div class="creator-card">
+            <span class="creator-icon">🎓</span>
+            <div class="creator-info">
+                <p><strong>Created with 💙 by:</strong></p>
+                <p>Devasangeethi S & Annmaria A Arampulickal</p>
+                <p style="font-size: 0.9rem; opacity: 0.8;">Computer Science Students | Model Engineering College, Kochi | Kerala, India</p>
+            </div>
+        </div>
+
+        <div class="about-grid" style="margin-top: 25px;">
+            <div class="about-item">
+                <span class="about-icon">🚀</span>
+                <p><strong>Our Goal</strong><br>We wanted to use our coding skills to build something that actually helps dyslexic people to read better.</p>
+            </div>
+        
+        </div>
+        
+        <p style="text-align: center; font-size: 0.9rem; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+            "Dyslexia is not a sign of low intelligence. It is a sign of a different way of processing information."
+        </p>
+    </div>
+
+    <button class="nav-btn close-modal" style="margin-top: 20px;">Close</button>
+</div>
+        <div id="modal-contact" class="modal-content">
+            <h2>Contact Us</h2>
+            <p>Have questions? Reach out to us at support@readable.com</p>
+            <button class="nav-btn close-modal">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

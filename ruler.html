@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadAble - Reading Ruler</title>
+    <style>
+        :root { 
+            --navy: #003067; 
+            --brown: #431f0a; 
+            --cream: #f9f4e8; 
+            --white: #ffffff;
+            --y: 50%; /* Default Y position */
+        }
+
+        @font-face { 
+            font-family: 'OpenDyslexic'; 
+            src: url('OpenDyslexic-Regular.otf'); 
+        }
+
+        body {
+            background-color: var(--cream);
+            font-family: 'OpenDyslexic', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            cursor: none; /* Hide standard cursor */
+        }
+
+        .container {
+            padding: 80px 50px;
+            max-width: 850px;
+            margin: auto;
+            line-height: 3;
+            color: var(--brown);
+            font-size: 1.8rem;
+            user-select: none;
+        }
+
+        /* Dark background everywhere else */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            z-index: 10;
+            /* Creates the transparent 'reading window' */
+            -webkit-mask-image: linear-gradient(
+                to bottom, 
+                black 0%, 
+                black calc(var(--y) - 45px), 
+                transparent calc(var(--y) - 45px), 
+                transparent calc(var(--y) + 45px), 
+                black calc(var(--y) + 45px), 
+                black 100%
+            );
+            mask-image: linear-gradient(
+                to bottom, 
+                black 0%, 
+                black calc(var(--y) - 45px), 
+                transparent calc(var(--y) - 45px), 
+                transparent calc(var(--y) + 45px), 
+                black calc(var(--y) + 45px), 
+                black 100%
+            );
+        }
+
+        /* The physical Ruler Bar following the cursor */
+        #cursor-ruler {
+            position: fixed;
+            left: 0;
+            top: calc(var(--y) + 45px); /* Positioned exactly under the text */
+            width: 100%;
+            height: 8px;
+            background: var(--brown);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* Top Guide line */
+        #cursor-guide {
+            position: fixed;
+            left: 0;
+            top: calc(var(--y) - 45px);
+            width: 100%;
+            height: 2px;
+            background: rgba(67, 31, 10, 0.3);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .back-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            padding: 15px 30px; background: var(--navy);
+            color: white; border: none; border-radius: 20px;
+            cursor: pointer; font-family: 'OpenDyslexic'; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay"></div>
+    <div id="cursor-ruler"></div>
+    <div id="cursor-guide"></div>
+
+    <div class="container">
+        <p>This is your special Focus Ruler.</p>
+        <p>The brown bar below the words acts like a shelf.</p>
+        <p>It helps your eyes rest on the sentence you are reading.</p>
+        <p>Notice how the other lines are dark and quiet.</p>
+        <p>This lets your brain focus only on one thing at a time.</p>
+        <p>Move your mouse up and down to scan the page.</p>
+        <p>You are becoming a very strong and focused reader!</p>
+    </div>
+
+    <button class="back-btn" onclick="location.href='lab.html'" style="cursor: pointer;">Back to Lab</button>
+
+    <script>
+        // Update the CSS variable --y based on cursor position
+        document.addEventListener('mousemove', (e) => {
+            document.documentElement.style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // Touch support for tablets
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            document.documentElement.style.setProperty('--y', touch.clientY + 'px');
+        }, { passive: false });
+
+        window.onload = () => {
+            const msg = new SpeechSynthesisUtterance("Move your cursor to use the ruler. Rest the words on the brown bar.");
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        };
+    </script>
+</body>
+</html>

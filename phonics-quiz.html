@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listen & Find - ReadAble</title>
+    <style>
+        :root { 
+            --navy: #003067; 
+            --brown: #431f0a; 
+            --cream: #f9f4e8; 
+            --white: #ffffff;
+            --mint: #b9fbc0;
+            --coral: #ffadad;
+        }
+
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf');
+        }
+
+        body {
+            font-family: 'OpenDyslexic', sans-serif;
+            background: var(--cream);
+            text-align: center;
+            padding: 30px;
+            color: var(--brown);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: var(--navy);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .instruction-text {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        button.control-btn {
+            font-family: 'OpenDyslexic', sans-serif;
+            font-size: 18px;
+            padding: 12px 25px;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button.control-btn:hover {
+            background: var(--brown);
+            transform: translateY(-2px);
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            min-height: 120px;
+        }
+
+        .letter {
+            font-size: 50px;
+            background: var(--white);
+            color: var(--navy);
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+            border: 4px solid var(--navy);
+            user-select: none;
+        }
+
+        .letter:hover {
+            transform: scale(1.1);
+            background: var(--navy);
+            color: white;
+        }
+
+        .correct {
+            background: var(--mint) !important;
+            color: var(--navy) !important;
+            border-color: #2ecc71 !important;
+            animation: pop 0.4s ease;
+        }
+
+        .wrong {
+            background: var(--coral) !important;
+            color: white !important;
+            border-color: #e74c3c !important;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        #result {
+            font-size: 24px;
+            margin-top: 30px;
+            font-weight: bold;
+            min-height: 35px;
+        }
+
+        #scoreBoard {
+            margin-top: 40px;
+            font-size: 20px;
+            background: var(--white);
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 2px dashed var(--navy);
+        }
+
+        .stop-btn { background: #666 !important; }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎧 Listen & Find</h1>
+    <p class="instruction-text">Click the sound button, then find the correct letter!</p>
+
+    <div>
+        <button class="control-btn" onclick="playSound()">🔊 Play Sound</button>
+        <button class="control-btn stop-btn" onclick="stopGame()">🛑 Stop Game</button>
+        <button class="control-btn" onclick="goBack()">⬅ Go Back</button>
+    </div>
+
+    <div class="options" id="options"></div>
+
+    <div id="result"></div>
+
+    <div id="scoreBoard">
+        ⭐ Score: <span id="score" style="color:var(--navy); font-weight:bold;">0</span> | 
+        Level: <span id="level" style="color:var(--brown); font-weight:bold;">1</span>
+    </div>
+
+    <script>
+        const letters = ["b","d","p","q","m","n","s","t","l","r"];
+        let correctLetter = "";
+        let score = 0;
+        let level = 1;
+        let gameActive = true;
+
+        function getRandomLetter() {
+            return letters[Math.floor(Math.random() * letters.length)];
+        }
+
+        function generateQuestion() {
+            if(!gameActive) return;
+
+            document.getElementById("result").innerText = "";
+            document.getElementById("options").innerHTML = "";
+
+            correctLetter = getRandomLetter();
+
+            let options = new Set();
+            options.add(correctLetter);
+
+            while(options.size < 4) {
+                options.add(getRandomLetter());
+            }
+
+            options = Array.from(options).sort(() => Math.random() - 0.5);
+
+            options.forEach(letter => {
+                let div = document.createElement("div");
+                div.className = "letter";
+                div.innerText = letter;
+                div.onclick = () => checkAnswer(letter, div);
+                document.getElementById("options").appendChild(div);
+            });
+            
+            // Optional: Auto-play sound when new question appears
+            setTimeout(playSound, 500);
+        }
+
+        function playSound() {
+            if(!gameActive) return;
+
+            speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance(correctLetter);
+            speech.rate = 0.7; // Slower for clarity
+            speech.pitch = 1.1;
+
+            // Voice selection logic
+            const voices = speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google'));
+            if (preferredVoice) speech.voice = preferredVoice;
+
+            speechSynthesis.speak(speech);
+        }
+
+        function checkAnswer(selected, element) {
+            if(!gameActive) return;
+
+            if(selected === correctLetter) {
+                element.classList.add("correct");
+                document.getElementById("result").style.color = "#2ecc71";
+                document.getElementById("result").innerText = "🌟 Amazing! You got it!";
+                score += 10;
+
+                if(score % 50 === 0) {
+                    level++;
+                    document.getElementById("level").innerText = level;
+                }
+
+                document.getElementById("score").innerText = score;
+                setTimeout(generateQuestion, 1500);
+            } else {
+                element.classList.add("wrong");
+                document.getElementById("result").style.color = "#e74c3c";
+                document.getElementById("result").innerText = "💛 Try again, you're doing great!";
+            }
+        }
+
+        function stopGame() {
+            gameActive = false;
+            speechSynthesis.cancel();
+            document.getElementById("result").style.color = "#431f0a";
+            document.getElementById("result").innerText = "🧸 Game Stopped. See you again!";
+            document.getElementById("options").innerHTML = "";
+        }
+
+        function goBack() {
+            speechSynthesis.cancel();
+            // This now takes you directly to the lab
+            window.location.href = 'lab.html';
+        }
+
+        // Initialize game
+        generateQuestion();
+        
+        // Ensure voices are loaded
+        window.speechSynthesis.onvoiceschanged = () => {};
+    </script>
+
+</body>
+</html>

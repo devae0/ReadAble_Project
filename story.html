@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Readable - Storybook</title>
+
+    <style>
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf') format('opentype');
+        }
+
+        body {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            background: linear-gradient(to bottom, #fff8e7, #fdebd0);
+            padding: 40px;
+            line-height: 2.2;
+            font-size: 22px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .storybook {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .story {
+            display: none;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .story.active {
+            display: block;
+        }
+
+        img {
+            width: 100%;
+            max-width: 350px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .difficult {
+            color: #d35400;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 2px dotted #d35400;
+        }
+
+        button {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            padding: 10px 18px;
+            margin: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            background-color: #f8c291;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f6b93b;
+            transform: scale(1.05);
+        }
+
+        input {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+        }
+
+        .popup {
+            margin-top: 20px;
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .highlight {
+            background-color: #ffeaa7;
+            color: #d63031;
+            font-weight: bold;
+            padding: 4px;
+            border-radius: 6px;
+            animation: blink 0.5s ease-in-out;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateX(20px);}
+            to {opacity: 1; transform: translateX(0);}
+        }
+
+        .controls {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>📖 Readable Storybook ✨</h1>
+
+<div class="storybook">
+
+    <!-- STORY 1 -->
+    <div class="story active">
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/21/23/princess-2024496_1280.png">
+        <p>
+            Elara had <span class="difficult" onclick="explainWord('golden')">golden</span> hair and lived in a tall tower.
+            A <span class="difficult" onclick="explainWord('brave')">brave</span> boy helped her feel <span class="difficult" onclick="explainWord('free')">free</span>.
+        </p>
+    </div>
+
+    <!-- STORY 2 -->
+    <div class="story">
+        <img src="https://cdn.pixabay.com/photo/2016/11/29/05/08/animal-1867126_1280.png">
+        <p>
+            Leo felt <span class="difficult" onclick="explainWord('afraid')">afraid</span> of thunder.
+            One night he became very <span class="difficult" onclick="explainWord('courageous')">courageous</span> and his family felt <span class="difficult" onclick="explainWord('proud')">proud</span>.
+        </p>
+    </div>
+
+    <!-- STORY 3 -->
+    <div class="story">
+        <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/bird-1297262_1280.png">
+        <p>
+            Mia found a <span class="difficult" onclick="explainWord('magical')">magical</span> blue bird.
+            The bird had <span class="difficult" onclick="explainWord('brilliant')">brilliant</span> wings that filled her with <span class="difficult" onclick="explainWord('joy')">joy</span>.
+        </p>
+    </div>
+
+    <div class="popup" id="popup"></div>
+
+    <div class="controls">
+        <button onclick="prevStory()">⬅ Previous</button>
+        <button onclick="readAloud()">🔊 Read</button>
+        <button onclick="pauseReading()">⏸ Pause</button>
+        <button onclick="resumeReading()">▶ Resume</button>
+        <button onclick="nextStory()">Next ➡</button>
+
+        <br><br>
+        Reading Speed:
+        <input type="range" min="0.5" max="1.2" step="0.1" value="0.75" id="speedControl">
+
+        <br><br>
+        <button onclick="goBack()">⬅ Go Back</button>
+        
+    </div>
+
+</div>
+
+<script>
+
+const stories = document.querySelectorAll(".story");
+let currentStory = 0;
+let isReading = false;
+let readingRate = 0.75;
+
+const wordDatabase = {
+    golden: "Yellow like gold",
+    brave: "Not afraid",
+    free: "Not trapped",
+    afraid: "Feeling scared",
+    courageous: "Very brave",
+    proud: "Happy about something good",
+    magical: "Wonderful and special",
+    brilliant: "Very bright",
+    joy: "Great happiness"
+};
+
+document.getElementById("speedControl").addEventListener("input", function() {
+    readingRate = this.value;
+});
+
+function showStory(index) {
+    speechSynthesis.cancel();
+    isReading = false;
+    stories.forEach(story => story.classList.remove("active"));
+    stories[index].classList.add("active");
+}
+
+function nextStory() {
+    currentStory = (currentStory + 1) % stories.length;
+    showStory(currentStory);
+}
+
+function prevStory() {
+    currentStory = (currentStory - 1 + stories.length) % stories.length;
+    showStory(currentStory);
+}
+
+function explainWord(word) {
+    const speech = new SpeechSynthesisUtterance(word);
+    speech.rate = readingRate;
+    speechSynthesis.speak(speech);
+
+    const popup = document.getElementById("popup");
+    popup.innerHTML = `<strong>${word}</strong><br>${wordDatabase[word]}`;
+    popup.style.display = "block";
+}
+
+window.speechSynthesis.onvoiceschanged = () => {
+    speechSynthesis.getVoices();
+};
+
+function readAloud() {
+
+    if (isReading) return;
+
+    speechSynthesis.cancel();
+    isReading = true;
+
+    const storyElement = stories[currentStory];
+    const originalHTML = storyElement.innerHTML;
+    const words = storyElement.innerText.split(" ");
+    let index = 0;
+
+    const voices = speechSynthesis.getVoices();
+    let femaleVoice = voices.find(voice =>
+        voice.name.toLowerCase().includes("female") ||
+        voice.name.toLowerCase().includes("zira") ||
+        voice.name.toLowerCase().includes("samantha") ||
+        voice.name.toLowerCase().includes("google uk english female")
+    );
+
+    function speakWord() {
+
+        if (!isReading) return;
+
+        if (index >= words.length) {
+            isReading = false;
+            storyElement.innerHTML = originalHTML;
+            return;
+        }
+
+        const originalWord = words[index];
+        const chunkedWord = originalWord.split("").join(".");
+
+        const updatedText = words.map((w, i) => {
+            if (i === index) {
+                return `<span class="highlight">${chunkedWord}</span>`;
+            }
+            return w;
+        }).join(" ");
+
+        storyElement.innerHTML = `<p>${updatedText}</p>`;
+
+        const speech = new SpeechSynthesisUtterance(originalWord);
+        speech.rate = readingRate;
+        speech.pitch = 1.2;
+
+        if (femaleVoice) speech.voice = femaleVoice;
+
+        speech.onend = () => {
+            index++;
+            speakWord();
+        };
+
+        speechSynthesis.speak(speech);
+    }
+
+    speakWord();
+}
+
+function pauseReading() {
+    speechSynthesis.pause();
+}
+
+function resumeReading() {
+    speechSynthesis.resume();
+}
+
+function goBack() {
+    speechSynthesis.cancel();
+    window.location.href = "lab.html";   // change if needed
+}
+
+
+
+</script>
+
+</body>
+</html>

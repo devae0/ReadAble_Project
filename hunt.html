@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadAble - Alpha-Stream</title>
+    <style>
+        :root { 
+            --navy: #003067; 
+            --brown: #431f0a; 
+            --cream: #f9f4e8; 
+            --white: #ffffff;
+        }
+
+        @font-face { 
+            font-family: 'OpenDyslexic'; 
+            src: url('OpenDyslexic-Regular.otf'); 
+        }
+
+        body {
+            background-color: var(--cream);
+            font-family: 'OpenDyslexic', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Prevents scrollbars during game */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            font-size: 1.5rem;
+            color: var(--navy);
+            background: rgba(255,255,255,0.8);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 2px solid var(--navy);
+        }
+
+        .target-msg {
+            margin-top: 20px;
+            font-size: 1.8rem;
+            color: var(--brown);
+            text-align: center;
+        }
+
+        .letter {
+            position: absolute;
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--navy);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+
+        .letter:hover {
+            transform: scale(1.2);
+        }
+
+        /* The falling animation */
+        @keyframes fall {
+            from { top: -100px; }
+            to { top: 110vh; }
+        }
+
+        .back-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 25px;
+            background: var(--navy);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'OpenDyslexic';
+            z-index: 100;
+        }
+
+        /* Visual Feedback for correct/incorrect */
+        .correct { color: #2ecc71 !important; }
+        .wrong { color: #e74c3c !important; }
+    </style>
+</head>
+<body>
+
+    <div class="stats">Score: <span id="score">0</span></div>
+    
+    <div class="target-msg">
+        Catch all the <b style="color:var(--navy); font-size: 2.2rem;">"B"</b> letters!
+    </div>
+
+    <button class="back-btn" onclick="location.href='lab.html'">Back to Lab</button>
+
+    <script>
+        let score = 0;
+        const targetLetter = "B";
+        const distractors = ["D", "P", "Q", "O"];
+        const gameContainer = document.body;
+
+        function createLetter() {
+            const isTarget = Math.random() > 0.6; // 40% chance of being the target
+            const char = isTarget ? targetLetter : distractors[Math.floor(Math.random() * distractors.length)];
+            
+            const div = document.createElement('div');
+            div.className = 'letter';
+            div.innerText = char;
+            
+            // Random horizontal position
+            div.style.left = Math.random() * 90 + 'vw';
+            
+            // Random speed for difficulty
+            const speed = 4 + Math.random() * 4; // 4s to 8s
+            div.style.animation = `fall ${speed}s linear forwards`;
+
+            div.onclick = function() {
+                if (char === targetLetter) {
+                    score++;
+                    document.getElementById('score').innerText = score;
+                    this.classList.add('correct');
+                    playTone(440); // High pitch for success
+                } else {
+                    score = Math.max(0, score - 1); // Penalty
+                    document.getElementById('score').innerText = score;
+                    this.classList.add('wrong');
+                    playTone(200); // Low pitch for error
+                }
+                
+                // Remove letter after click with a small fade
+                setTimeout(() => div.remove(), 200);
+            };
+
+            // Remove letter if it falls off screen without being clicked
+            div.addEventListener('animationend', () => div.remove());
+
+            gameContainer.appendChild(div);
+        }
+
+        // Audio feedback using Web Audio API
+        function playTone(freq) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = freq;
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+            osc.stop(ctx.currentTime + 0.5);
+        }
+
+        // Spawn a new letter every second
+        const gameInterval = setInterval(createLetter, 1200);
+
+        // Slow the game down slightly for younger kids
+        window.onload = () => {
+            const msg = new SpeechSynthesisUtterance("Catch all the B letters as they fall!");
+            msg.rate = 0.9;
+            window.speechSynthesis.speak(msg);
+        };
+    </script>
+</body>
+</html>

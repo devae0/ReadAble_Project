@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Readable - Alphabet Tracing</title>
+
+    <style>
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf') format('opentype');
+        }
+
+        body {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            background-color: #fef6e4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #444;
+        }
+
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .letter-box {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 22px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+
+        .letter-box:hover {
+            background: #d8f3dc;
+            transform: scale(1.1);
+        }
+
+        .selected {
+            background: #a8dadc;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            margin-top: 20px;
+        }
+
+        button {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            background-color: #cdeac0;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #a8dadc;
+            transform: scale(1.05);
+        }
+
+        #result {
+            margin: 20px auto;
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .success {
+            background-color: #d8f3dc;
+            color: #2d6a4f;
+        }
+
+        .retry {
+            background-color: #ffe5d9;
+            color: #9c6644;
+        }
+
+        #gameArea {
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>🌈 Choose a Letter to Trace</h1>
+
+<div class="alphabet-grid" id="alphabetGrid"></div>
+
+<div id="gameArea">
+    <h2 id="currentLetterTitle"></h2>
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <br>
+    <button onclick="clearCanvas()">Clear</button>
+    <button onclick="checkTracing()">Check</button>
+    <button onclick="closeGame()">Stop Game</button>
+    <button onclick="goBack()">⬅ Go Back</button>
+    <div id="result"></div>
+</div>
+
+<script>
+
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const grid = document.getElementById("alphabetGrid");
+const gameArea = document.getElementById("gameArea");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let currentLetter = "";
+let drawing = false;
+let strokeCount = 0;
+
+// Create alphabet grid
+letters.forEach(letter => {
+    const box = document.createElement("div");
+    box.classList.add("letter-box");
+    box.innerText = letter;
+    box.onclick = () => selectLetter(letter, box);
+    grid.appendChild(box);
+});
+
+function selectLetter(letter, element) {
+    currentLetter = letter;
+    strokeCount = 0;
+
+    document.querySelectorAll(".letter-box").forEach(el => el.classList.remove("selected"));
+    element.classList.add("selected");
+
+    gameArea.style.display = "block";
+    document.getElementById("currentLetterTitle").innerText = "Trace Letter: " + letter;
+
+    drawLetter();
+}
+
+function drawLetter() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = "250px OpenDyslexic";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.setLineDash([10, 10]);
+    ctx.strokeStyle = "#bdbdbd";
+    ctx.lineWidth = 3;
+
+    ctx.strokeText(currentLetter, canvas.width/2, canvas.height/2);
+    ctx.setLineDash([]);
+
+    document.getElementById("result").style.display = "none";
+}
+
+// Drawing logic
+canvas.addEventListener("mousedown", () => drawing = true);
+canvas.addEventListener("mouseup", () => {
+    drawing = false;
+    ctx.beginPath();
+});
+canvas.addEventListener("mousemove", draw);
+
+function draw(e) {
+    if (!drawing) return;
+
+    strokeCount++;
+
+    ctx.lineWidth = 8;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#344e41";
+
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+function clearCanvas() {
+    drawLetter();
+}
+
+function checkTracing() {
+    const resultDiv = document.getElementById("result");
+    resultDiv.style.display = "block";
+
+    if (strokeCount > 200) {
+        resultDiv.className = "success";
+        resultDiv.innerHTML = "🌟 Beautiful tracing! You're doing amazing! 🎉";
+    } else {
+        resultDiv.className = "retry";
+        resultDiv.innerHTML = "😊 Almost there! Try tracing the full letter 💛";
+    }
+}
+
+function closeGame() {
+    gameArea.style.display = "none";
+    document.querySelectorAll(".letter-box").forEach(el => el.classList.remove("selected"));
+    document.getElementById("result").style.display = "none";
+}
+
+function goBack() {
+    closeGame(); // reset everything
+    window.location.href = "lab.html"; // change this if your home page has a different name
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Readable - Rhyming Word Game</title>
+
+    <style>
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: url('OpenDyslexic-Regular.otf') format('opentype');
+        }
+
+        body {
+            background-color: #ffeef5;
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #ff9ec4;
+        }
+
+        #question {
+            font-size: 28px;
+            margin: 20px 0;
+        }
+
+        .options button {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            font-size: 32px;
+            padding: 20px 40px;
+            margin: 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            background-color: #ffd6e7;
+            transition: 0.3s;
+        }
+
+        .options button:hover {
+            background-color: #ffc2db;
+            transform: scale(1.1);
+        }
+
+        #feedback {
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .control-btn {
+            margin-top: 25px;
+            padding: 10px 25px;
+            font-size: 18px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            background-color: #ffe0ea;
+            font-family: 'OpenDyslexic', Arial;
+        }
+
+        .control-btn:hover {
+            background-color: #ffc2db;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🎵 Rhyming Word Game 🌸</h1>
+
+<div id="question"></div>
+
+<div class="options" id="options"></div>
+
+<div id="feedback"></div>
+
+<button class="control-btn" onclick="generateQuestion()">Next Question</button>
+<button class="control-btn" onclick="goBack()">Go Back</button>
+
+<script>
+
+const wordSets = [
+    ["cat", "bat", "hat", "dog"],
+    ["sun", "fun", "run", "pen"],
+    ["cake", "lake", "bake", "fish"],
+    ["ball", "call", "tall", "tree"],
+    ["moon", "spoon", "noon", "car"]
+];
+
+let correctSet = [];
+
+function generateQuestion() {
+
+    speechSynthesis.cancel();
+
+    const questionDiv = document.getElementById("question");
+    const optionsDiv = document.getElementById("options");
+    const feedbackDiv = document.getElementById("feedback");
+
+    feedbackDiv.innerHTML = "";
+
+    correctSet = wordSets[Math.floor(Math.random() * wordSets.length)];
+    const oddWord = correctSet[3];
+
+    questionDiv.innerHTML = "Which word does NOT rhyme?";
+
+    optionsDiv.innerHTML = "";
+
+    let shuffled = [...correctSet].sort(() => 0.5 - Math.random());
+
+    shuffled.forEach(word => {
+        const btn = document.createElement("button");
+        btn.innerHTML = word;
+        btn.onclick = () => checkAnswer(word);
+        optionsDiv.appendChild(btn);
+    });
+
+    // Auto read all words slowly
+    speakAllWords(shuffled);
+}
+
+function checkAnswer(selected) {
+
+    speakWord(selected);
+
+    const feedbackDiv = document.getElementById("feedback");
+
+    if(selected === correctSet[3]) {
+        feedbackDiv.innerHTML = "🌟 Correct! Great listening! 🎉";
+        feedbackDiv.style.color = "#2d6a4f";
+    } else {
+        feedbackDiv.innerHTML = "💛 Try again!";
+        feedbackDiv.style.color = "#9c6644";
+    }
+}
+
+function speakAllWords(words) {
+
+    let delay = 0;
+
+    words.forEach(word => {
+        setTimeout(() => {
+            speakWord(word);
+        }, delay);
+        delay += 1000;
+    });
+}
+
+function speakWord(word) {
+
+    let speech = new SpeechSynthesisUtterance(word);
+    speech.rate = 0.8;
+    speech.pitch = 1.2;
+
+    const voices = speechSynthesis.getVoices();
+    let femaleVoice = voices.find(v =>
+        v.name.toLowerCase().includes("zira") ||
+        v.name.toLowerCase().includes("female") ||
+        v.name.toLowerCase().includes("samantha")
+    );
+
+    if(femaleVoice) speech.voice = femaleVoice;
+
+    speechSynthesis.speak(speech);
+}
+
+function goBack() {
+    window.location.href = "lab.html";
+}
+
+generateQuestion();
+
+</script>
+
+</body>
+</html>

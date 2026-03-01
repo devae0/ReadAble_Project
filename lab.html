@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadAble - My Personalized Lab</title>
+    <style>
+        :root { 
+            --navy: #003067; 
+            --brown: #431f0a; 
+            --cream: #f9f4e8; 
+            --white: #ffffff;
+        }
+
+        @font-face { 
+            font-family: 'OpenDyslexic'; 
+            src: url('OpenDyslexic-Regular.otf'); 
+        }
+
+        body {
+            background-color: var(--cream);
+            font-family: 'OpenDyslexic', sans-serif;
+            margin: 0; 
+            padding: 40px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh;
+        }
+        /* Home Button Styling */
+.home-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'OpenDyslexic', sans-serif;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    z-index: 1000; /* Ensure it stays above everything */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.home-btn:hover {
+    background: var(--brown);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            max-width: 800px;
+        }
+
+        .lab-grid {
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px; 
+            max-width: 1100px; 
+            width: 100%;
+        }
+
+        /* Mode Cards */
+        .mode-card {
+            background: var(--white); 
+            padding: 30px; 
+            border-radius: 40px;
+            text-align: center; 
+            border: 4px solid transparent;
+            cursor: pointer; 
+            transition: 0.3s transform ease, 0.3s box-shadow ease;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .mode-card:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Personalized Highlight */
+        .recommended {
+            border-color: var(--navy) !important;
+            transform: scale(1.08);
+            box-shadow: 0 0 30px rgba(0, 48, 103, 0.3);
+            z-index: 10;
+        }
+
+        .for-you-badge {
+            position: absolute; 
+            top: -20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            background: var(--brown); 
+            color: var(--white); 
+            padding: 8px 20px;
+            border-radius: 20px; 
+            font-size: 0.9rem; 
+            font-weight: bold;
+            display: none; 
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .icon { font-size: 4.5rem; margin-bottom: 15px; }
+        h3 { color: var(--navy); font-size: 1.8rem; margin: 10px 0; }
+        p { color: var(--brown); font-size: 1rem; line-height: 1.4; }
+
+        /* Journey Overlay */
+        #journey-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0;
+            width: 100%; 
+            height: 100%; 
+            background: rgba(222, 231, 241, 0.9);
+            z-index: 100; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .journey-content {
+            background: var(--cream);
+            padding: 40px; 
+            border-radius: 40px; 
+            max-width: 900px; 
+            width: 90%;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .guide-grid {
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; 
+            margin-top: 30px;
+        }
+
+        .guide-box {
+            background: var(--white); 
+            padding: 25px; 
+            border-radius: 25px;
+            border: 3px solid var(--navy); 
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        .guide-box:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .guide-box:hover h3, .guide-box:hover p, .guide-box:hover span {
+            color: var(--white) !important;
+        }
+
+        .close-btn {
+            margin-top: 30px; 
+            padding: 15px 50px; 
+            background: var(--brown);
+            color: var(--white); 
+            border: none; 
+            border-radius: 20px; 
+            cursor: pointer;
+            font-family: 'OpenDyslexic'; 
+            font-size: 1.3rem;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .lab-grid, .guide-grid { grid-template-columns: 1fr; }
+            body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+   <a href="index.html" class="home-btn">🏠 Home</a>
+    <div class="header">
+        <h1 style="color: var(--navy); font-size: 3.2rem; margin-bottom: 10px;">My Personalized Lab</h1>
+        <p id="personal-msg" style="font-size: 1.5rem; color: var(--brown);">We've found the best ways for you to learn! ✨</p>
+    </div>
+
+    <div class="lab-grid">
+        <div class="mode-card" id="card-visual" onclick="openJourney('visual')">
+            <div class="for-you-badge" id="badge-visual">CHOSEN FOR YOU! 🌟</div>
+            <div class="icon">⚡</div>
+            <h3>Visual Lab</h3>
+            <p>Perfect if you flip letters or see them spin.</p>
+        </div>
+
+        <div class="mode-card" id="card-phonetic" onclick="openJourney('phonetic')">
+            <div class="for-you-badge" id="badge-phonetic">CHOSEN FOR YOU! 🌟</div>
+            <div class="icon">📖</div>
+            <h3>Sound Lab</h3>
+            <p>Perfect for connecting sounds to stories.</p>
+        </div>
+
+        <div class="mode-card" id="card-tracking" onclick="openJourney('tracking')">
+            <div class="for-you-badge" id="badge-tracking">CHOSEN FOR YOU! 🌟</div>
+            <div class="icon">📏</div>
+            <h3>Focus Lab</h3>
+            <p>Perfect for keeping your eyes on the line.</p>
+        </div>
+    </div>
+
+    <div id="journey-overlay">
+        <div class="journey-content">
+            <h2 id="journey-title" style="color: var(--navy); font-size: 2.5rem; margin: 0;"></h2>
+            <p style="color: var(--brown); font-size: 1.2rem;">Complete these 5 tasks to master this level!</p>
+            <div class="guide-grid" id="guide-list"></div>
+            <button class="close-btn" onclick="closeJourney()">Back to Lab</button>
+        </div>
+    </div>
+
+    <script>
+    /* 1. DATA: Exactly 3 Tasks Per Mode */
+    const modeFeatures = {
+        visual: {
+            title: "Visual Learning Path",
+            message: "We noticed letter shapes are tricky. This Lab is for you!",
+            guides: [
+                { h: "1. Letter Trace", p: "Use the drawing box to trace 'b' and 'd' properly.", link: "trace.html" },
+                { h: "2. Shape Match", p: "Match letters to their shadow shapes to win!", link: "shapes.html" },
+                { h: "3. Visual Quiz", p: "Test your letter power and earn your badge.", link: "visual-quiz.html" }
+            ]
+        },
+        phonetic: {
+            title: "Sound Learning Path",
+            message: "The Sound Lab is ready! Let's listen to some stories together.",
+            guides: [
+                { h: "1. Story Telling", p: "Listen at 0.6x speed while the words glow for you.", link: "story.html" },
+                { h: "2. Rhyme Game", p: "Find words that sound alike, like 'Cat' and 'Hat'.", link: "rhyme.html" },
+                { h: "3. Sound Quiz", p: "Hear a sound and pick the correct letter.", link: "phonics-quiz.html" }
+            ]
+        },
+        tracking: {
+            title: "Focus Learning Path",
+            message: "We'll help your eyes stay focused. This Lab is for you!",
+            guides: [
+                { h: "1. Reading Ruler", p: "A special mask to help you read one line at a time.", link: "ruler.html" },
+                { h: "2. Math Dots", p: "Learn math using fun dot patterns, not just numbers.", link: "math.html" },
+                { h: "3. Letter Hunt", p: "Find the hidden 'b' to train your scanning skills.", link: "hunt.html" }
+            ]
+        }
+    };
+
+    /* 2. LOGIC: Personalizing the Lab on Load */
+    window.onload = function() {
+        const data = JSON.parse(localStorage.getItem('dyslexiaType'));
+
+        if (data) {
+            const recommended = data.recommendation; 
+
+            // Reset any previous highlights
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('recommended');
+            });
+            document.querySelectorAll('.for-you-badge').forEach(badge => {
+                badge.style.display = 'none';
+            });
+
+            // Apply personalization based on 10-Step Test result
+            const targetCard = document.getElementById('card-' + recommended);
+            const targetBadge = document.getElementById('badge-' + recommended);
+
+            if (targetCard && targetBadge) {
+                targetCard.classList.add('recommended');
+                targetBadge.style.display = 'block';
+                
+                // Update the welcome message
+                document.getElementById('personal-msg').innerHTML = modeFeatures[recommended].message;
+            }
+        }
+    };
+
+    /* 3. INTERACTION: Opening the Path (Audio Removed) */
+    function openJourney(mode) {
+        const journey = modeFeatures[mode];
+        const list = document.getElementById('guide-list');
+        
+        document.getElementById('journey-title').innerText = journey.title;
+        list.innerHTML = "";
+        
+        journey.guides.forEach(g => {
+            list.innerHTML += `
+                <div class="guide-box" onclick="location.href='${g.link}'">
+                    <h3 style="margin:0; color: var(--navy);">${g.h}</h3>
+                    <p style="margin:8px 0 0; font-size:0.95rem; color: var(--brown);">${g.p}</p>
+                    <span style="display:block; margin-top:12px; font-weight:bold; color:var(--navy);">Start Task →</span>
+                </div>
+            `;
+        });
+
+        // Show the overlay
+        document.getElementById('journey-overlay').style.display = 'flex';
+        
+        // Note: SpeechSynthesisUtterance has been removed here to keep the dashboard silent.
+    }
+
+    /* 4. UTILITY: Closing the Overlay */
+    function closeJourney() {
+        document.getElementById('journey-overlay').style.display = 'none';
+    }
+</script>
+</body>
+</html>
